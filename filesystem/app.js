@@ -13,6 +13,28 @@ const { resolve, join } = require("path");
 // note: second step is to Read or Write File
 
 (async () => {
+  // commands
+  const CREATE_FILE = "create a file";
+  const DELETE_FILE = "delete a file";
+  const RENAME_FILE = "rename a file";
+  const READ_FILE = "read a file";
+  const WRITE_FILE = "write a file";
+
+  const createFile = async path => {
+    try {
+      // check if file exists
+      const existingFileHandler = await fs.open(path, "r");
+      existingFileHandler.close();
+
+      return console.log(`File created at ${path}`);
+    } catch (err) {
+      // if file doesn't exist, create a new file
+      const newFileHandler = await fs.open(path, "w");
+      newFileHandler.close();
+      console.log(`File created at ${path}`);
+    }
+  };
+
   // OPEN FILE - 'r' flag is for read mode only
   const commandFileHandler = await fs.open("./command.txt", "r");
 
@@ -25,6 +47,14 @@ const { resolve, join } = require("path");
 
     // decoder to convert binary data to string format
     console.log(content.toString("utf-8"));
+
+    const command = content.toString("utf-8");
+
+    // create a file/<path>
+    if (command.includes("create a file")) {
+      const filePath = command.substring(CREATE_FILE.length + 1);
+      createFile(filePath);
+    }
   });
 
   // note: decoder 01 => meaningful
